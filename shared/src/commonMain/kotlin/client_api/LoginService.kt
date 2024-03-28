@@ -8,12 +8,12 @@ import io.ktor.http.*
 import utils.get
 
 class LoginService(val httpClient: HttpClient) {
-    suspend fun login(tel: String = "", email: String = "", verifyCode: String = "", password: String = ""): String {
+    suspend fun login(tel: String = "", email: String = "", verifyCode: String = "", password: String = ""): Result<String> {
         if(tel.isEmpty() && email.isEmpty()) {
-            throw IllegalArgumentException("tel or email must be provided")
+            return Result.failure(IllegalArgumentException("tel or email must be provided"))
         }
         if(verifyCode.isEmpty() && password.isEmpty()) {
-            throw IllegalArgumentException("verifyCode or password must be provided")
+            return Result.failure(IllegalArgumentException("verifyCode or password must be provided"))
         }
         val loginRequest = LoginRequest(tel, email, password, verifyCode)
         httpClient.post {
@@ -22,9 +22,9 @@ class LoginService(val httpClient: HttpClient) {
             setBody(loginRequest)
         }.get<String?>()
             .onSuccess {
-                return if(!it.isNullOrEmpty()) it else ""
+                return if(!it.isNullOrEmpty()) Result.success(it) else Result.failure(NoSuchElementException("no token"))
             }.onFailure {
-                throw it
+                return Result.failure(it)
             }
-        throw Exception("unknown error")
+        return Result.failure(IllegalArgumentException("can not touch here"))
     } }

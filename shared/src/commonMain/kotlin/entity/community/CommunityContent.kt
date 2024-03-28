@@ -11,9 +11,9 @@ data class CommunityContent(
     val title: String,
     val content: String,
     val date: String,
-    val solved: Boolean,
-    val images: List<String>,
-    val comments: List<Comment>,
+    val solved: Boolean = false,
+    var images: List<String> = emptyList(),
+    var comments: List<Comment> = emptyList(),
 )
 @Serializable
 data class Comment(

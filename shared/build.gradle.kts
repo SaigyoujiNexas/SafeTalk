@@ -35,6 +35,7 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation(libs.coil)
             implementation(libs.multiplatform.settings)
+            implementation(libs.kotlinx.coroutines.core)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)

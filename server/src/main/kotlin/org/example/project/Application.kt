@@ -8,6 +8,7 @@ import entity.BaseResponse
 import entity.LoginRequest
 import entity.RegisterRequest
 import entity.community.CommunityContent
+import entity.community.NewContent
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -27,6 +28,7 @@ import org.example.project.util.audience
 import org.example.project.util.issuer
 import org.example.project.util.myRealm
 import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 const val secretKey = "114514"
@@ -50,7 +52,7 @@ fun Application.module() {
             )
             validate { credential ->
                 val uid = credential.payload.getClaim("uid").asInt()
-                val haveValidToken = !Tokens.selectAll().andWhere { Tokens.uid eq uid }
+                val haveValidToken = !Tokens.select{ Tokens.uid eq uid }
                     .empty()
                 if (uid != null && haveValidToken){
                     JWTPrincipal(credential.payload)
@@ -59,7 +61,7 @@ fun Application.module() {
                 }
             }
             challenge { defaultScheme, realm ->
-                call.respond(BaseResponse<Any>(401, "Unauthorized", null))
+                call.respond(BaseResponse<String>(401, "Unauthorized", "未授权"))
             }
         }
     }
@@ -85,12 +87,13 @@ fun Application.module() {
             post("/community/content") {
                 val token = call.principal<JWTPrincipal>()
                 if (token == null) {
-                    call.respond(BaseResponse(401, "Unauthorized", null))
+                    call.respond(BaseResponse<String>(401, "Unauthorized", "未授权"))
                     return@post
                 }
                 val uid = token.payload.getClaim("uid").asInt()
-                val content = call.receive<CommunityContent>()
-                call.respond(CommunityService.addCommunityContent(content))
+                val content = call.receive<NewContent>()
+                val result = CommunityService.addCommunityContent(content, uid);
+                call.respond(createResponse(result));
             }
         }
     }

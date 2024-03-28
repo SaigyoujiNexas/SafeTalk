@@ -79,7 +79,7 @@ object CommunityDao {
         try {
             transaction {
                 val ans = CommunityContents.insert {
-                    it[uid] = content.user.uid
+                    it[uid] = content.user!!.uid
                     it[title] = content.title
                     it[CommunityContents.content] = content.content
                     it[createTime] = System.currentTimeMillis()

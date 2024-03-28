@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import client_api.CommunityService
 import entity.community.CommunityContent
 import entity.community.NewContent
 import kotlinx.coroutines.flow.Flow
@@ -13,13 +14,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import org.koin.compose.getKoin
+import org.koin.compose.koinInject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class CommunityEditScreenModel: ScreenModel {
+class CommunityEditScreenModel: ScreenModel, KoinComponent {
 
     var title by mutableStateOf("")
     var contents by mutableStateOf("")
     private val selectedImage = mutableListOf<ByteArray>()
     private var _images = MutableStateFlow<MutableList<ByteArray>>(mutableListOf())
+    private val communityService :CommunityService by inject()
     val images: StateFlow<List<ByteArray>>
         get() = _images
 
@@ -37,8 +43,9 @@ class CommunityEditScreenModel: ScreenModel {
             _images.emit(selectedImage)
         }
     }
-    suspend fun postContent(title: String, content: String, images: List<ByteArray>): Result<Boolean>{
+    suspend fun postContent(title: String, content: String, images: List<ByteArray>): Result<Unit>{
         val newContent = NewContent(title = title, content = content, images = images)
-        return Result.success(true)
+        val result = communityService.postContent(newContent)
+        return result
     }
 }

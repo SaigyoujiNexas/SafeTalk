@@ -9,6 +9,7 @@ import org.example.project.util.VerifyUtil
 import org.example.project.util.generateToken
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -72,6 +73,14 @@ object AccountService {
                 }
             }
         }
+    }
+
+    fun getAccountInfo(uid: Int): Result<User>{
+        transaction {
+            val queried = Users.select { Users.id eq uid }.firstOrNull()?: return@transaction Result.failure(NoSuchElementException(""))
+            return@transaction Result.success(Users.asUser(queried))
+        }
+        return Result.failure(IllegalArgumentException("no any user info queried"))
     }
     private fun loginByTel(loginRequest: LoginRequest): Result<String>{
         val isLoginByVerify = loginRequest.verifyCode.isNotEmpty()

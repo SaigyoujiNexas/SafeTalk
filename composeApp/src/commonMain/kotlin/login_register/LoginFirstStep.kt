@@ -18,10 +18,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import client_api.LoginService
 import com.russhwolf.settings.set
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import main.MainScreen
 import org.koin.compose.koinInject
 import tab.CommunityTab
@@ -44,15 +41,20 @@ class LoginFirstStep : Screen {
                     onClick = {
                         scope.launch(Dispatchers.IO){
                             val isTel = loginModel.telOrEmail.isTel()
-                            token = loginService.login(
+                            loginService.login(
                                 tel = if(isTel) loginModel.telOrEmail else "",
                                 email = if(loginModel.telOrEmail.isEmail()) loginModel.telOrEmail else "",
                                 verifyCode = loginModel.verifyCode,
                                 password = loginModel.password
-                            )
-                            settings.settings["token"] = token
-                            if(token.isNotEmpty()){
-                                navigator.replaceAll(MainScreen())
+                            ).onSuccess {
+//                                withContext(Dispatchers.Main) {
+                                    settings.settings["token"] = it
+                                    if (it.isNotEmpty()) {
+                                        navigator.replaceAll(MainScreen())
+                                    }
+//                                }
+                            }.onFailure {
+
                             }
                         }
                     },

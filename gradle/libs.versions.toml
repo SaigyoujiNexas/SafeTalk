@@ -16,6 +16,7 @@ coil = "3.0.0-alpha03"
 compose-plugin = "1.5.12"
 junit = "4.13.2"
 kotlin = "1.9.22"
+kotlinxCoroutinesCore = "1.8.1-Beta"
 ktor = "2.3.7"
 logback = "1.4.14"
 torch= "2.1.0"
@@ -32,6 +33,7 @@ file-picker = "3.1.0"
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 kotlinx-serialization-json = {module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 kotlinx-io = {module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io"}
 

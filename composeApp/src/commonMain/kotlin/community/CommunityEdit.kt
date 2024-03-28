@@ -16,6 +16,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -53,9 +54,16 @@ class CommunityEdit : Screen {
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
-                                scope.launch(Dispatchers.Default) {
+                               /* scope.launch(Dispatchers.Default) {
                                     val imageLevel = checkImage(selectedImages[0])
                                     score = imageLevel.name
+                                }*/
+                                scope.launch(Dispatchers.IO) {
+                                    communityEditScreenModel.postContent(
+                                        title = communityEditScreenModel.title,
+                                        content = communityEditScreenModel.contents,
+                                        images = selectedImages
+                                    )
                                 }
 
                             },
