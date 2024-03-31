@@ -70,16 +70,17 @@ kotlin {
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.enrichededitor.compose)
+//            implementation(libs.enrichededitor.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.coil)
             implementation(libs.coil.compose)
             implementation(libs.file.picker)
-
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.io)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.material3.desktop)
         }
     }

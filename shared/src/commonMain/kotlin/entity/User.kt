@@ -10,3 +10,5 @@ data class User(
     val phone: String = "",
     val avatar: String = "https://s2.loli.net/2024/01/29/K9Pc4wosiGeWvlu.png",
 )
+
+var CurrentUser: User? = null

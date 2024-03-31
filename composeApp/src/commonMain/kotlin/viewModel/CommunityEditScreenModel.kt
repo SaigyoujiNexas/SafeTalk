@@ -9,15 +9,18 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import client_api.CommunityService
 import entity.community.CommunityContent
 import entity.community.NewContent
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.compose.getKoin
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import utils.checkImage
 
 class CommunityEditScreenModel: ScreenModel, KoinComponent {
 
@@ -43,9 +46,21 @@ class CommunityEditScreenModel: ScreenModel, KoinComponent {
             _images.emit(selectedImage)
         }
     }
-    suspend fun postContent(title: String, content: String, images: List<ByteArray>): Result<Unit>{
+    suspend fun postContent(title: String, content: String,
+                            images: List<ByteArray>,
+                            onImageCheckFailed: () -> Unit = {},
+                            onContentUpLoadSucceed: () -> Unit = {}): Result<Unit>{
+        val imageDataPassed = images.map{checkImage(it)}.any { it == ImageLevel.HENTAI || it == ImageLevel.SEXY || it == ImageLevel.PORN }
+        if(!imageDataPassed){
+            withContext(Dispatchers.Main) {
+                onImageCheckFailed()
+            }
+        }
         val newContent = NewContent(title = title, content = content, images = images)
         val result = communityService.postContent(newContent)
+        withContext(Dispatchers.Main) {
+            onContentUpLoadSucceed()
+        }
         return result
     }
 }

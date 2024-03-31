@@ -4,11 +4,15 @@ import Greeting
 import SERVER_PORT
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import di.netWorkModule
 import entity.BaseResponse
 import entity.LoginRequest
 import entity.RegisterRequest
 import entity.community.CommunityContent
+import entity.community.NewComment
 import entity.community.NewContent
+import io.ktor.client.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -20,6 +24,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.logging.*
+import kotlinx.serialization.builtins.ByteArraySerializer
 import org.example.project.db.DatabaseSingleton
 import org.example.project.entity.Tokens
 import org.example.project.service.AccountService
@@ -27,13 +32,18 @@ import org.example.project.service.CommunityService
 import org.example.project.util.audience
 import org.example.project.util.issuer
 import org.example.project.util.myRealm
+import org.example.project.util.secret
 import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.core.Koin
+import org.koin.core.KoinApplication
+import org.koin.ktor.plugin.Koin
 
 const val secretKey = "114514"
 fun main() {
-    embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module).start(wait = true)
+        embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
@@ -41,34 +51,36 @@ fun Application.module() {
     install(ContentNegotiation){
         json()
     }
+    install(Koin){
+        modules(netWorkModule)
+    }
     install(Authentication) {
         jwt("auth-jwt") {
             realm = myRealm
-            verifier(
-                JWT.require(Algorithm.HMAC256(secretKey))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
-                    .build()
-            )
-            validate { credential ->
+            verifier(JWT
+                .require(Algorithm.HMAC256(secret))
+                .withAudience(*audience)
+                .withIssuer(issuer)
+                .build())
+            validate{ credential ->
                 val uid = credential.payload.getClaim("uid").asInt()
-                val haveValidToken = !Tokens.select{ Tokens.uid eq uid }
-                    .empty()
+                val haveValidToken = transaction {
+                    !Tokens.select { Tokens.uid eq uid }.empty()
+                }
+                println("No validate success")
                 if (uid != null && haveValidToken){
+                    println("validate success")
                     JWTPrincipal(credential.payload)
                 }else {
                     null
                 }
             }
             challenge { defaultScheme, realm ->
-                call.respond(BaseResponse<String>(401, "Unauthorized", "未授权"))
+                call.respond(HttpStatusCode.Unauthorized, BaseResponse<String>(401, "Unauthorized", "未授权"))
             }
         }
     }
     routing {
-        get("/") {
-            call.respondText("Ktor: ${Greeting().greet()}")
-        }
         post("/account/register"){
             val registerRequest = call.receive<RegisterRequest>()
             val result = AccountService.register(registerRequest)
@@ -79,11 +91,27 @@ fun Application.module() {
             val token = AccountService.login(loginRequest)
             call.respond(createResponse(token))
         }
-        get("/community/content"){
-            val keyword = call.parameters["keyword"]?:""
-
-        }
         authenticate("auth-jwt") {
+            get("/community/content") {
+                val keyword = call.parameters["keyword"] ?: ""
+                val res = CommunityService.getContent(keyword)
+                call.respond(createResponse(res))
+            }
+            get("/user/current_info"){
+                val token = call.principal<JWTPrincipal>()
+                token?.let {
+                    val uid = it.payload.getClaim("uid").asInt()
+                    val user = AccountService.getAccountInfo(uid)
+                    call.respond(createResponse(user))
+                }?:call.respond(BaseResponse.fastFailed())
+            }
+            get("/community/detail"){
+                val cid = call.parameters["cid"]?:""
+                if(cid.isEmpty()){
+                    call.respond(BaseResponse.fastFailed())
+                }
+                call.respond(createResponse(CommunityService.getContentDetail(cid.toInt())))
+            }
             post("/community/content") {
                 val token = call.principal<JWTPrincipal>()
                 if (token == null) {
@@ -92,8 +120,15 @@ fun Application.module() {
                 }
                 val uid = token.payload.getClaim("uid").asInt()
                 val content = call.receive<NewContent>()
+                println("start insert");
                 val result = CommunityService.addCommunityContent(content, uid);
                 call.respond(createResponse(result));
+            }
+            post("/community/comment") {
+                val uid = call.principal<JWTPrincipal>()!!.payload.getClaim("uid").asInt()
+                val comment: NewComment = call.receive()
+                val result = CommunityService.addComment(comment, uid)
+                call.respond(createResponse(result))
             }
         }
     }

@@ -1,7 +1,9 @@
 package client_api
 
 import BASE_URL
+import entity.community.Comment
 import entity.community.CommunityContent
+import entity.community.NewComment
 import entity.community.NewContent
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -21,6 +23,20 @@ class CommunityService(val httpClient: HttpClient) {
         return httpClient.get {
             contentType(ContentType.Application.Json)
             url("$BASE_URL/community/content")
+        }.get()
+    }
+    suspend fun getContentDetail(cid: Int): Result<CommunityContent>{
+        return httpClient.get {
+            contentType(ContentType.Application.Json)
+            parameter("cid", cid)
+            url("$BASE_URL/community/detail")
+        }.get()
+    }
+    suspend fun sendComment(newComment: NewComment): Result<Unit>{
+        return httpClient.post {
+            url("$BASE_URL/community/comment")
+            contentType(ContentType.Application.Json)
+            setBody(newComment)
         }.get()
     }
 }

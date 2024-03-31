@@ -7,4 +7,6 @@ object Images: IntIdTable(){
     val communityId = integer("community_id").nullable()
     val commentId = integer("comment_id").nullable()
     val url = varchar("url", 100)
+
+
 }

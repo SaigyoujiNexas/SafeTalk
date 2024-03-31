@@ -13,10 +13,10 @@ object Users: IntIdTable() {
 
     fun asUser(row: ResultRow): User =
         User(
-            uid = row[Users.id].value,
-            username = row[Users.username],
-            email = row[Users.email],
-            phone = row[Users.phone],
-            avatar = row[Users.avatar],
+            uid = row[id].value,
+            username = row[username],
+            email = row[email],
+            phone = row[phone],
+            avatar = row[avatar],
         )
 }

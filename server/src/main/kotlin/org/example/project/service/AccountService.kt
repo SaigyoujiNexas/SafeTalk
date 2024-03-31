@@ -39,11 +39,19 @@ object AccountService {
         println("loginRequest: $loginRequest")
         val isLoginByTel = loginRequest.tel.isNotEmpty()
         if(loginRequest.tel == specialUserTel && loginRequest.passwd == specialUserPasswd){
-            val user = User(username = "silent碎月", uid = 0, phone = specialUserTel)
+            val user = User(username = "silent碎月", uid = 1, phone = specialUserTel)
             return Result.success(generateToken(user)).also { tokenRes ->
                 transaction {
+                    if(Users.select { Users.id eq 1 }.empty()){
+                        Users.insert {statement ->
+                            statement[id] = 1
+                            statement[username] = "silent碎月"
+                            statement[phone] = specialUserTel
+                            statement[password] = specialUserPasswd
+                        }
+                    }
                     Tokens.insert {
-                        it[uid] = 0
+                        it[uid] = 1
                         it[token] = tokenRes.getOrNull() ?: ""
                     }
                 }
@@ -76,11 +84,10 @@ object AccountService {
     }
 
     fun getAccountInfo(uid: Int): Result<User>{
-        transaction {
+        return transaction {
             val queried = Users.select { Users.id eq uid }.firstOrNull()?: return@transaction Result.failure(NoSuchElementException(""))
             return@transaction Result.success(Users.asUser(queried))
         }
-        return Result.failure(IllegalArgumentException("no any user info queried"))
     }
     private fun loginByTel(loginRequest: LoginRequest): Result<String>{
         val isLoginByVerify = loginRequest.verifyCode.isNotEmpty()
