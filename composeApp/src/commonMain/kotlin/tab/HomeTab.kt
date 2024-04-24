@@ -15,17 +15,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import client_api.CommunityService
 import coil3.compose.AsyncImage
-import entity.User
 import home.ContentDetailScreen
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import utils.aroundScreenNavigator
 import viewModel.CommunityModel
 
@@ -42,16 +38,15 @@ object HomeTab: PaddingTab, KoinComponent {
                         aroundScreenNavigator.push(ContentDetailScreen)
                     }) {
                         Row(modifier = Modifier.padding(top = 12.dp, start = 12.dp)) {
-                            val user = it.user
                             AsyncImage(
-                                model = user.avatar,
+                                model = it.userAvatar,
                                 contentDescription = "",
                                 modifier = Modifier.size(48.dp),
                             )
                             Column {
-                                Text(text = user.username)
+                                Text(text = it.userName)
                                 Text(
-                                    text = it.date,
+                                    text = it.time,
                                     fontSize = 12.sp
                                     )
                             }

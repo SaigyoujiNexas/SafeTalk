@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import client_api.CommunityService
-import entity.community.CommunityContent
 import entity.community.NewContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

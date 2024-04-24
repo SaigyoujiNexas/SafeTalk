@@ -1,6 +1,6 @@
 package org.example.project.entity
 
-import entity.User
+import entity.account.User
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
 

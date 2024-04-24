@@ -16,8 +16,12 @@ object DatabaseSingleton {
             SchemaUtils.create(Users)
             SchemaUtils.create(Tokens)
             SchemaUtils.create(CommunityContents)
+            SchemaUtils.createMissingTablesAndColumns(CommunityContents)
             SchemaUtils.create(Comments)
             SchemaUtils.create(Images)
+            SchemaUtils.create(Histories)
+            SchemaUtils.create(Collections)
+            SchemaUtils.create(UserLevels)
         }
     }
 }

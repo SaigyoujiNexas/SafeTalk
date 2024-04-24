@@ -3,7 +3,8 @@ package viewModel
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import client_api.CommunityService
-import entity.community.CommunityContent
+import entity.community.CommunityDetail
+import entity.community.CommunityInfo
 import entity.community.NewComment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,14 +16,14 @@ import org.koin.core.component.inject
 class CommunityModel: ScreenModel, KoinComponent {
     var searchKeyWords = ""
 
-    private val _communityContents = MutableStateFlow(emptyList<CommunityContent>())
+    private val _communityContents = MutableStateFlow(emptyList<CommunityInfo>())
     private val communityService: CommunityService by inject()
 
-    private val _currentCommunityContent: MutableStateFlow<CommunityContent?> = MutableStateFlow(null)
-    val communityContents: Flow<List<CommunityContent>>
+    private val _currentCommunityContent: MutableStateFlow<CommunityDetail?> = MutableStateFlow(null)
+    val communityContents: Flow<List<CommunityInfo>>
         get() = _communityContents
 
-    val currentCommunityContent: StateFlow<CommunityContent?>
+    val currentCommunityContent: StateFlow<CommunityDetail?>
         get() = _currentCommunityContent
     init {
         getAllCommunityContent()

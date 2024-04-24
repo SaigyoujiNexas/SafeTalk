@@ -13,18 +13,12 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.russhwolf.settings.get
 import settings.settings
+import user.AccountMain
 
 object AccountTab: PaddingTab {
     @Composable
     override fun Content(paddingValues: PaddingValues) {
-        Column {
-            Button(onClick = {
-//                settings["token"] = null
-                settings.remove("token")
-            }){
-                Text("登出")
-            }
-        }
+        AccountMain(paddingValues).Content()
     }
 
     override val options: TabOptions

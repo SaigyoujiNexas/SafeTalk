@@ -1,6 +1,6 @@
 package org.example.project.dao
 
-import entity.User
+import entity.account.User
 import org.example.project.entity.Users
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction

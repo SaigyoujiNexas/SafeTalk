@@ -5,7 +5,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import client_api.UserService
 import com.russhwolf.settings.get
 import di.netWorkModule
-import entity.CurrentUser
+import entity.account.CurrentUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch

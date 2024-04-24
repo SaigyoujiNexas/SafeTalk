@@ -1,7 +1,7 @@
 package client_api
 
 import BASE_URL
-import entity.User
+import entity.account.User
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.http.*

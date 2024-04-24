@@ -7,8 +7,7 @@ import androidx.compose.ui.window.application
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-fun main() =
-        runBlocking {
+fun main() = runBlocking {
             application {
             Window(onCloseRequest = ::exitApplication, title = "SafeTalk") {
             App()

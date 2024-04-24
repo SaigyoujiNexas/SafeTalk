@@ -1,7 +1,7 @@
 package org.example.project.entity
 
 import entity.community.Comment
-import entity.community.CommunityContent
+import entity.community.CommunityDetail
 import org.example.project.util.toDate
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -13,10 +13,14 @@ object CommunityContents: IntIdTable(){
     val content = text("content")
     val createTime = long("create_time")
     val solved = bool("solved")
+    val deleted = bool("deleted").default(false)
+    val deleteReason = varchar("delete_reason", 30).default("")
 
-    fun asCommunityContent(row: ResultRow): Result<CommunityContent> {
-        return Result.success(CommunityContent(
+    fun asCommunityDetail(row: ResultRow): Result<CommunityDetail> {
+        return Result.success(CommunityDetail(
             id = row[id].value,
+            deleted = row[deleted],
+            deleteReason = row[deleteReason],
             title = row[title],
             content = row[content],
             date = row[createTime].toDate(),

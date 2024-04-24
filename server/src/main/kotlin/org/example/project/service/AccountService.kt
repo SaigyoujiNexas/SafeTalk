@@ -2,7 +2,7 @@ package org.example.project.service
 
 import entity.LoginRequest
 import entity.RegisterRequest
-import entity.User
+import entity.account.User
 import org.example.project.entity.Tokens
 import org.example.project.entity.Users
 import org.example.project.util.VerifyUtil

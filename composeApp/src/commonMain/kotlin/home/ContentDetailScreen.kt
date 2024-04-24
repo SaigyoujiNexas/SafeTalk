@@ -2,11 +2,7 @@ package home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,19 +14,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
-import entity.CurrentUser
 import entity.community.Comment
-import entity.community.CommunityContent
+import entity.community.CommunityDetail
 import entity.community.NewComment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -102,7 +94,7 @@ object ContentDetailScreen: Screen {
     }
 
     @Composable
-    fun ContentDetail(contentDetail: CommunityContent, modifier: Modifier = Modifier) {
+    fun ContentDetail(contentDetail: CommunityDetail, modifier: Modifier = Modifier) {
         val user = contentDetail.user
         val columns = GridCells.Adaptive(120.dp)
         LazyVerticalGrid(
@@ -182,7 +174,7 @@ object ContentDetailScreen: Screen {
     @Composable
     fun CommentEdit(
         modifier: Modifier = Modifier,
-        communityContent: CommunityContent,
+        communityContent: CommunityDetail,
         onSendComment: (NewComment) -> Unit = {},
         onAddImage: (ByteArray) -> Unit = {}
     ) {

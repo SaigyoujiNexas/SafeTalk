@@ -8,7 +8,6 @@ import di.netWorkModule
 import entity.BaseResponse
 import entity.LoginRequest
 import entity.RegisterRequest
-import entity.community.CommunityContent
 import entity.community.NewComment
 import entity.community.NewContent
 import io.ktor.client.*
@@ -94,7 +93,7 @@ fun Application.module() {
         authenticate("auth-jwt") {
             get("/community/content") {
                 val keyword = call.parameters["keyword"] ?: ""
-                val res = CommunityService.getContent(keyword)
+                val res = CommunityService.getCommunityInfo(keyword)
                 call.respond(createResponse(res))
             }
             get("/user/current_info"){

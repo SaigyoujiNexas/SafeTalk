@@ -37,7 +37,8 @@ class CommunityEdit : Screen {
         val scope = rememberCoroutineScope()
         val communityEditScreenModel: CommunityEditScreenModel = rememberScreenModel { CommunityEditScreenModel() }
         val selectedImages by communityEditScreenModel.images.collectAsState(emptyList())
-        var showSendSuccessDialog by remember { mutableStateOf(true) }
+        var showSendSuccessDialog by remember { mutableStateOf(false) }
+        var showProgressDialog by remember { mutableStateOf(false) }
         val filetype = listOf("jpg", "png", "webp", "jpeg")
         var showFilePicker by remember {
             mutableStateOf(false)
@@ -66,6 +67,7 @@ class CommunityEdit : Screen {
                                         images = selectedImages,
                                         onContentUpLoadSucceed = {
                                             scope.launch {
+                                                showSendSuccessDialog = true
                                                 delay(1000)
                                                 showSendSuccessDialog = false
                                                 delay(300)
@@ -111,6 +113,9 @@ class CommunityEdit : Screen {
                             Text("发送成功", modifier = Modifier.align(Alignment.CenterHorizontally))
                         }
                     }
+                }
+                AnimatedVisibility(visible = showProgressDialog){
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
         }

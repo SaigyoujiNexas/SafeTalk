@@ -3,10 +3,7 @@ package org.example.project.service
 import client_api.CommunityService
 import client_api.UserService
 import entity.BaseResponse
-import entity.community.Comment
-import entity.community.CommunityContent
-import entity.community.NewComment
-import entity.community.NewContent
+import entity.community.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -31,7 +28,7 @@ object CommunityService {
                 return Result.failure(ConnectException("Not image bed connection"))
             }
         }
-        val realContent = CommunityContent(
+        val realContent = CommunityDetail(
             user = user,
             title = content.title,
             content = content.content,
@@ -45,11 +42,11 @@ object CommunityService {
             return Result.failure(exception?:Exception("Unknown exception occured"))
         }
     }
-    fun getContent(keyword: String): Result<List<CommunityContent>>{
-        return CommunityDao.getCommunityContents(keyword)
+    fun getCommunityInfo(keyword: String): Result<List<CommunityInfo>>{
+        return CommunityDao.getCommunityInfos(keyword)
 
     }
-    fun getContentDetail(cid: Int):Result<CommunityContent>{
+    fun getContentDetail(cid: Int):Result<CommunityDetail>{
         return CommunityDao.getContentDetail(cid)
     }
 
