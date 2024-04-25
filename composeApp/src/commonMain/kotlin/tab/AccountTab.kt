@@ -27,7 +27,7 @@ object AccountTab: PaddingTab {
             val title = "账户"
             val icon = rememberVectorPainter(Icons.Outlined.AccountCircle)
             return TabOptions(
-                index = 2u,
+                index = 3u,
                 title = title,
                 icon = icon
             )

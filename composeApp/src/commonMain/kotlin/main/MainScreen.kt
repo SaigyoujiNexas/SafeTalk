@@ -14,6 +14,7 @@ import cafe.adriel.voyager.navigator.tab.TabNavigator
 import tab.AccountTab
 import tab.CommunityTab
 import tab.HomeTab
+import tab.MessageTab
 import utils.aroundScreenNavigator
 
 class MainScreen: Screen {
@@ -26,6 +27,7 @@ class MainScreen: Screen {
                     NavigationBar {
                         TabNavigationItem(HomeTab)
                         TabNavigationItem(CommunityTab)
+                        TabNavigationItem(MessageTab)
                         TabNavigationItem(AccountTab)
                     }
                 },

@@ -10,8 +10,6 @@ data class BaseResponse<T>(
 ){
     val isSuccess: Boolean
         get() = code == 200
-
-
     companion object{
         fun fastFailed() = BaseResponse<String>(code = 500, msg = "failed", data = null)
     }

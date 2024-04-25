@@ -40,6 +40,9 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.client.okhttp)
             implementation(libs.java.pytorch)
+            implementation("ai.djl.pytorch:pytorch-jni:2.1.1-0.27.0")
+            // https://mvnrepository.com/artifact/ai.djl.pytorch/pytorch-engine
+            implementation("ai.djl.pytorch:pytorch-engine:0.27.0")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)

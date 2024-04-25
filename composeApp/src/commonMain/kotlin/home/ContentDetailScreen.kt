@@ -110,7 +110,8 @@ object ContentDetailScreen: Screen {
                         Row(Modifier.height(48.dp)) {
                             AsyncImage(
                                 user.avatar, contentDescription = null, modifier =
-                                Modifier.size(48.dp)
+                                Modifier.size(48.dp).clickable {
+                                }
                             )
                             Text(user.username, modifier = Modifier.padding(start = 12.dp))
                         }

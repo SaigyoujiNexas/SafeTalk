@@ -1,12 +1,13 @@
 package utils
 
 import ImageLevel
+import ai.djl.Model
 import org.pytorch.IValue
 import org.pytorch.MemoryFormat
 import org.pytorch.Module
 
 actual suspend fun checkImage(imageByteArray: ByteArray): ImageLevel {
-    return ImageLevel.DRAWING
+//    return ImageLevel.DRAWING
     val module = Module.load("model.pt1")
     val float32 = TensorImageUtils.bitmapToFloat32Tensor(imageByteArray, TensorImageUtils.TORCHVISION_NORM_MEAN_RGB,
         TensorImageUtils.TORCHVISION_NORM_STD_RGB, MemoryFormat.CHANNELS_LAST)
