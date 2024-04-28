@@ -24,7 +24,8 @@ data class CommunityInfo(
     val userAvatar: String,
     val time: String,
     val title: String,
-    val solved: Boolean,
+    val solved: Boolean = false,
+    val isCollected: Boolean = false,
 )
 @Serializable
 data class Comment(

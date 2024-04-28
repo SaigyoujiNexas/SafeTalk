@@ -10,12 +10,11 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import utils.aroundScreenNavigator
+import utils.AppNavigator
 
 class LoginRegisterMain : Screen {
     @Composable
     override fun Content() {
-        aroundScreenNavigator = LocalNavigator.currentOrThrow
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()){
@@ -23,7 +22,7 @@ class LoginRegisterMain : Screen {
             Spacer(Modifier.height(144.dp))
             Row {
                 Button( onClick = {
-                    aroundScreenNavigator.push(LoginFirstStep())
+                    AppNavigator.instance.push(LoginFirstStep())
                 }){
                     Text("登录")
                 }

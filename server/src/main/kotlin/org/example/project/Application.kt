@@ -12,6 +12,8 @@ import entity.community.NewComment
 import entity.community.NewContent
 import io.ktor.client.*
 import io.ktor.http.*
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -23,10 +25,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.logging.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.builtins.ByteArraySerializer
 import org.example.project.db.DatabaseSingleton
 import org.example.project.entity.Tokens
 import org.example.project.service.AccountService
+import org.example.project.service.CollectionService
 import org.example.project.service.CommunityService
 import org.example.project.util.audience
 import org.example.project.util.issuer
@@ -42,7 +46,8 @@ import org.koin.ktor.plugin.Koin
 
 const val secretKey = "114514"
 fun main() {
-        embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module).start(wait = true)
+//    aSocket(SelectorManager(Dispatchers.IO))
 }
 
 fun Application.module() {
@@ -127,6 +132,31 @@ fun Application.module() {
                 val uid = call.principal<JWTPrincipal>()!!.payload.getClaim("uid").asInt()
                 val comment: NewComment = call.receive()
                 val result = CommunityService.addComment(comment, uid)
+                call.respond(createResponse(result))
+            }
+            post("/collection"){
+                val cid = call.parameters["cid"]?:""
+                if(cid.isEmpty()){
+                    call.respond(BaseResponse.fastFailed())
+                }
+                val uid = call.principal<JWTPrincipal>()!!.payload.getClaim("uid").asInt()
+                val result = CollectionService.addCollection(uid, cid.toInt())
+                call.respond(createResponse(result))
+            }
+            delete("/collection"){
+                val cid = call.parameters["cid"]?:""
+                if(cid.isEmpty())
+                    call.respond(BaseResponse.fastFailed())
+                val uid = call.principal<JWTPrincipal>()!!.payload.getClaim("uid").asInt()
+                val result = CollectionService.removeCollection(uid, cid.toInt())
+                call.respond(createResponse(result))
+            }
+            get("/collection"){
+                val uid = call.parameters["uid"]?:""
+                if(uid.isEmpty())
+                    call.respond(BaseResponse.fastFailed())
+                val currentUserId = call.principal<JWTPrincipal>()!!.payload.getClaim("uid").asInt()
+                val result = CollectionService.getCollections(uid.toInt(), currentUserId)
                 call.respond(createResponse(result))
             }
         }

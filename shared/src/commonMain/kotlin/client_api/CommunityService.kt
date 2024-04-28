@@ -7,7 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import utils.get
 
-class CommunityService(val httpClient: HttpClient) {
+class CommunityService(private val httpClient: HttpClient) {
     suspend fun postContent(newContent: NewContent): Result<Unit>{
         return httpClient.post{
             contentType(ContentType.Application.Json)

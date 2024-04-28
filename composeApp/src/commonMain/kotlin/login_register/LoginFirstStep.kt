@@ -21,7 +21,6 @@ import com.russhwolf.settings.set
 import kotlinx.coroutines.*
 import main.MainScreen
 import org.koin.compose.koinInject
-import tab.CommunityTab
 import utils.isEmail
 import utils.isTel
 import viewModel.LoginRegisterModel

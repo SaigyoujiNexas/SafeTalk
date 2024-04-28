@@ -7,7 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import utils.get
 
-class UserService(val httpClient: HttpClient) {
+class UserService(private val httpClient: HttpClient) {
     suspend fun getCurrentUserInfo(token: String): Result<User>{
         val domain = "$BASE_URL/user/current_info"
         return httpClient.get {

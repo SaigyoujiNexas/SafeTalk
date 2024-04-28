@@ -12,21 +12,17 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import tab.AccountTab
-import tab.CommunityTab
 import tab.HomeTab
 import tab.MessageTab
-import utils.aroundScreenNavigator
 
 class MainScreen: Screen {
     @Composable
     override fun Content() {
-        aroundScreenNavigator = LocalNavigator.currentOrThrow
-        TabNavigator(HomeTab) {
+        TabNavigator(HomeTab, key = "currentTab") {
             Scaffold(
                 bottomBar = {
                     NavigationBar {
                         TabNavigationItem(HomeTab)
-                        TabNavigationItem(CommunityTab)
                         TabNavigationItem(MessageTab)
                         TabNavigationItem(AccountTab)
                     }

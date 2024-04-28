@@ -1,5 +1,13 @@
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.animation.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import client_api.UserService
 import com.russhwolf.settings.get
@@ -13,49 +21,33 @@ import main.MainScreen
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
 import settings.settings
+import utils.AppNavigator
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     KoinApplication(application ={
         modules(netWorkModule)
     }
     ) {
-        var loginStatus by remember { mutableStateOf(LoginStatus.None) }
+        val stackDepth by AppNavigator.instance.stackCount.collectAsState()
         MaterialTheme{
-            val token: String? = settings["token"]
-            if(token.isNullOrEmpty()) {
-                Navigator(LoginRegisterScreen())
-            } else {
-                if(loginStatus == LoginStatus.None)
-                    loginStatus = LoginStatus.Logining
-                val userService: UserService = koinInject()
-                rememberCoroutineScope().launch(Dispatchers.IO) {
-                    userService.getCurrentUserInfo(token).onSuccess {
-                        CurrentUser = it
-                        loginStatus = LoginStatus.LoginSuccess
-                    }.onFailure {
-                        loginStatus = LoginStatus.LoginFailed
-                    }
-                }
-                when(loginStatus) {
-                    LoginStatus.LoginSuccess -> Navigator(MainScreen())
-                    LoginStatus.LoginFailed ->{
-                        Navigator(LoginRegisterScreen())
-                    }
-                    LoginStatus.None -> {
+            Column(modifier = Modifier.fillMaxSize()) {
+                TopAppBar(
+                    title = { Text("Safe Talk") },
+                    navigationIcon = {
+                        AnimatedVisibility(stackDepth != 0, enter = fadeIn() + expandHorizontally(), exit = fadeOut() + shrinkHorizontally()) {
+                                IconButton(onClick = { AppNavigator.instance.pop() }) {
+                                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, "")
+                                }
+                        }
+                    },
+                    actions = {
 
                     }
-                    LoginStatus.Logining -> {
-
-                    }
-                }
+                )
+                Navigator(SplashScreen())
             }
         }
     }
-}
-enum class LoginStatus{
-                      None,
-    Logining,
-    LoginSuccess,
-    LoginFailed,
 }

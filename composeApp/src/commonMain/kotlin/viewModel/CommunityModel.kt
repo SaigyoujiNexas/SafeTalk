@@ -1,8 +1,11 @@
 package viewModel
 
+import androidx.compose.ui.text.resolveDefaults
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import client_api.CollectionService
 import client_api.CommunityService
+import entity.account.CurrentUser
 import entity.community.CommunityDetail
 import entity.community.CommunityInfo
 import entity.community.NewComment
@@ -18,6 +21,7 @@ class CommunityModel: ScreenModel, KoinComponent {
 
     private val _communityContents = MutableStateFlow(emptyList<CommunityInfo>())
     private val communityService: CommunityService by inject()
+    private val collectionService: CollectionService by inject()
 
     private val _currentCommunityContent: MutableStateFlow<CommunityDetail?> = MutableStateFlow(null)
     val communityContents: Flow<List<CommunityInfo>>
@@ -46,6 +50,14 @@ class CommunityModel: ScreenModel, KoinComponent {
         if(res.isSuccess){
             onSendSuccess()
         }
+    }
+    suspend fun addCollection(communityContentId: Int): Result<Unit>{
+        val res = collectionService.addCollection(communityContentId)
+        return res
+    }
+    suspend fun removeCollection(communityContentId: Int): Result<Unit>{
+        val res = collectionService.removeCollection(communityContentId)
+        return res
     }
 
 }

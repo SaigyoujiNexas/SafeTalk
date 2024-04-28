@@ -13,29 +13,27 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object CommunityDao {
     fun getCommunityInfos(keyWord: String = ""): Result<List<CommunityInfo>> {
         return transaction {
-            if (keyWord.isNotEmpty()) {
-                CommunityContents.select { CommunityContents.title like "%$keyWord%" and CommunityContents.deleted eq booleanLiteral(false) }
-            } else {
-                CommunityContents.select{CommunityContents.deleted eq booleanLiteral(false) }
-            }.map {
-                val user = AccountDao.getAccountInfo(it[CommunityContents.uid].value)
-                if (user.isFailure) {
-                    return@transaction Result.failure(user.exceptionOrNull()!!)
-                }
-                val title = it[CommunityContents.title]
-                val createTime = it[CommunityContents.createTime]
-                val id = it[CommunityContents.id].value
-                CommunityInfo(
-                    userAvatar = user.getOrNull()!!.avatar,
-                    userName = user.getOrNull()!!.username,
-                    title = title,
-                    time = createTime.toDate(),
-                    id = id,
-                    solved = it[CommunityContents.solved],
-                )
-            }.let {
+            try {
+                if (keyWord.isNotEmpty()) {
+                    CommunityContents.select {
+                        CommunityContents.title like "%$keyWord%" and CommunityContents.deleted eq booleanLiteral(
+                            false
+                        )
+                    }
+                } else {
+                    CommunityContents.select { CommunityContents.deleted eq booleanLiteral(false) }
+                }.map {
+                    val res = CommunityContents.asCommunityInfo(it)
+                    if (res.isSuccess)
+                        res.getOrThrow()
+                    else
+                        throw Exception("convert to ContentInfo failed")
+                }.let {
 
-                return@transaction Result.success(it)
+                    return@transaction Result.success(it)
+                }
+            }catch (e: Throwable){
+                return@transaction Result.failure(e)
             }
         }
     }
@@ -65,6 +63,17 @@ object CommunityDao {
                     return@transaction Result.failure<Unit>(e)
             }
                 return@transaction Result.success(Unit)
+        }
+    }
+
+    fun getContentInfo(cid: Int): Result<CommunityInfo>{
+        return transaction {
+            try{
+                val res  =CommunityContents.select{CommunityContents.id eq cid}.firstOrNull()?:return@transaction Result.failure(NoSuchElementException("No Such Content"))
+                return@transaction CommunityContents.asCommunityInfo(res)
+            }catch (e: Throwable){
+                return@transaction Result.failure(e)
+            }
         }
     }
 

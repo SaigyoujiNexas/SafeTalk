@@ -2,6 +2,9 @@ package org.example.project.entity
 
 import entity.community.Comment
 import entity.community.CommunityDetail
+import entity.community.CommunityInfo
+import org.example.project.dao.AccountDao
+import org.example.project.dao.CollectionDao
 import org.example.project.util.toDate
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -28,6 +31,25 @@ object CommunityContents: IntIdTable(){
             user = Users.asUser(Users.select { Users.id eq row[uid] }.firstOrNull()?:return Result.failure(NoSuchElementException("No author info"))),
             comments = Comments.select { Comments.communityId eq row[id].value }.map { Comments.asComment(it) }.mapNotNull { it.getOrNull() },
             images = Images.select { Images.communityId eq row[id].value }.map { it[Images.url] }
+        ))
+    }
+
+    fun asCommunityInfo(row: ResultRow): Result<CommunityInfo> {
+        val user = AccountDao.getAccountInfo(row[CommunityContents.uid].value)
+        if (user.isFailure) {
+            return Result.failure(user.exceptionOrNull()!!)
+        }
+        val title = row[CommunityContents.title]
+        val createTime = row[CommunityContents.createTime]
+        val id = row[CommunityContents.id].value
+        return Result.success(CommunityInfo(
+            userAvatar = user.getOrNull()!!.avatar,
+            userName = user.getOrNull()!!.username,
+            title = title,
+            time = createTime.toDate(),
+            id = id,
+            solved = row[CommunityContents.solved],
+            isCollected = CollectionDao.isCollected(user.getOrNull()!!.uid, id),
         ))
     }
 }

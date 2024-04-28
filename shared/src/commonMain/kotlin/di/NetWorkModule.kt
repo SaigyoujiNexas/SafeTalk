@@ -1,5 +1,6 @@
 package di
 
+import client_api.CollectionService
 import client_api.CommunityService
 import client_api.LoginService
 import client_api.UserService
@@ -47,7 +48,10 @@ val netWorkModule = module {
     single<CommunityService> {
         CommunityService(get())
     }
-    single {
+    single<UserService> {
         UserService(get())
+    }
+    single<CollectionService> {
+        CollectionService(get())
     }
 }

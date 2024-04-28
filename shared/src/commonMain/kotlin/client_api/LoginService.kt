@@ -7,7 +7,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import utils.get
 
-class LoginService(val httpClient: HttpClient) {
+class LoginService(private val httpClient: HttpClient) {
     suspend fun login(tel: String = "", email: String = "", verifyCode: String = "", password: String = ""): Result<String> {
         if(tel.isEmpty() && email.isEmpty()) {
             return Result.failure(IllegalArgumentException("tel or email must be provided"))

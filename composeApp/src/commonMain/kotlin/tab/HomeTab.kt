@@ -21,64 +21,14 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import coil3.compose.AsyncImage
 import home.ContentDetailScreen
+import home.HomeMainScreen
 import org.koin.core.component.KoinComponent
-import utils.aroundScreenNavigator
 import viewModel.CommunityModel
 
 object HomeTab: PaddingTab, KoinComponent {
     @Composable
     override fun Content(paddingValues: PaddingValues) {
-        val viewModel: CommunityModel = rememberScreenModel { CommunityModel() }
-        val contents by viewModel.communityContents.collectAsState(emptyList())
-        Column {
-            LazyColumn {
-                items(contents){
-                    Card(modifier =  Modifier.fillMaxWidth().padding(12.dp), onClick = {
-                        ContentDetailScreen.cid = it.id
-                        aroundScreenNavigator.push(ContentDetailScreen)
-                    }) {
-                        Row(modifier = Modifier.padding(top = 12.dp, start = 12.dp)) {
-                            AsyncImage(
-                                model = it.userAvatar,
-                                contentDescription = "",
-                                modifier = Modifier.size(48.dp),
-                            )
-                            Column {
-                                Text(text = it.userName)
-                                Text(
-                                    text = it.time,
-                                    fontSize = 12.sp
-                                    )
-                            }
-                        }
-                        Text(text = it.title, modifier = Modifier
-                            .padding(start = 8.dp)
-                            .padding(vertical = 8.dp)
-                            .align(Alignment.Start)
-                        )
-                        if(it.solved) {
-                            Image(Icons.Outlined.Done,  "",
-                                modifier = Modifier
-                                    .align(Alignment.End)
-                                    .padding(bottom = 8.dp, end = 8.dp)
-                                )
-                        }
-                        Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
-                            IconButton(onClick = {}){
-                                Icon(Icons.Outlined.Star, "")
-                            }
-                            IconButton(onClick = {}){
-                                Icon(Icons.Outlined.ThumbUp, "")
-                            }
-                            IconButton(onClick = {
-                            }){
-                                Icon(Icons.Outlined.Share, "")
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        HomeMainScreen(paddingValues).Content()
     }
 
     override val options: TabOptions

@@ -21,6 +21,7 @@ object DatabaseSingleton {
             SchemaUtils.create(Images)
             SchemaUtils.create(Histories)
             SchemaUtils.create(Collections)
+            SchemaUtils.createMissingTablesAndColumns(Collections)
             SchemaUtils.create(UserLevels)
         }
     }

@@ -25,8 +25,8 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import utils.AppNavigator
 import utils.ImageFromByteArray
-import utils.aroundScreenNavigator
 import utils.byteArrayFromFile
 import viewModel.CommunityEditScreenModel
 
@@ -71,7 +71,7 @@ class CommunityEdit : Screen {
                                                 delay(1000)
                                                 showSendSuccessDialog = false
                                                 delay(300)
-                                                aroundScreenNavigator.pop()
+                                                AppNavigator.instance.pop()
                                             }
                                         }
                                     )
@@ -94,7 +94,7 @@ class CommunityEdit : Screen {
                 AnimatedVisibility(visible = showSendSuccessDialog){
                     Dialog(
                         onDismissRequest = {
-                            aroundScreenNavigator.pop()
+                            AppNavigator.instance.pop()
                         }, properties = DialogProperties(
                             dismissOnBackPress = false,
                             dismissOnClickOutside = false
