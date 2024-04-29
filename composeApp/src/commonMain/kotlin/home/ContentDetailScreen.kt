@@ -10,11 +10,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.*
+import androidx.compose.material3.Typography
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -100,35 +103,43 @@ object ContentDetailScreen: Screen {
         LazyVerticalGrid(
             columns = columns,
             modifier = modifier
-                .padding(24.dp)
+                .padding(horizontal = 24.dp)
         ) {
+
             item(span = {
                 GridItemSpan(maxLineSpan)
             }) {
                 Column {
-                    Card(Modifier.fillMaxWidth()) {
-                        Row(Modifier.height(48.dp)) {
-                            AsyncImage(
-                                user.avatar, contentDescription = null, modifier =
-                                Modifier.size(48.dp).clickable {
-                                }
-                            )
-                            Text(user.username, modifier = Modifier.padding(start = 12.dp))
+                    Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+                        AsyncImage(user.avatar, contentDescription = null, modifier =
+                        Modifier.size(48.dp).clickable {
+                            }.align(Alignment.CenterVertically)
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column(modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween) {
+                            Text(user.username, style = MaterialTheme.typography.bodyMedium)
+                            Text(contentDetail.date, style = MaterialTheme.typography.bodySmall)
                         }
                     }
-                    Spacer(Modifier.height(12.dp))
-                    Card(Modifier.fillMaxWidth()) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(contentDetail.title)
-                            Spacer(modifier = Modifier.fillMaxWidth().height(1.dp).background(Color.Black))
-                            Text(contentDetail.content)
-                        }
-                    }
+                        Spacer(Modifier.height(12.dp))
+                        Text(contentDetail.title, style = MaterialTheme.typography.titleLarge)
+                        Spacer(Modifier.height(12.dp))
+                        Text(contentDetail.content)
                 }
             }
-            items(contentDetail.images.size) {
-                AsyncImage(contentDetail.images[it], null)
+            items(contentDetail.images){
+                Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)){
+                    AsyncImage(it, null, modifier = Modifier.align(Alignment.Center))
+                }
             }
+//            item(span = {
+//                GridItemSpan(maxLineSpan)
+//            }) {
+//                Column(modifier.fillMaxWidth()) {
+//                    HorizontalDivider()
+//                }
+//            }
             if (contentDetail.comments.isEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Box(Modifier.fillMaxWidth()) {
@@ -141,31 +152,34 @@ object ContentDetailScreen: Screen {
                 }
             } else {
                 items(contentDetail.comments.size, span = { GridItemSpan(maxLineSpan) }) {
-                    Comment(contentDetail.comments[it])
+                    Comment(contentDetail.comments[it], modifier = Modifier.fillMaxWidth())
+                    HorizontalDivider()
                 }
             }
         }
     }
 
     @Composable
-    fun Comment(comment: Comment) {
-        Card {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+    fun Comment(comment: Comment, modifier: Modifier = Modifier) {
+        Column(modifier = modifier.padding(vertical = 12.dp)) {
+            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
                 Row {
                     AsyncImage(
-                        comment.user.avatar, null, modifier = Modifier.size(24.dp)
+                        comment.user.avatar, null, modifier = Modifier.size(48.dp).align(Alignment.CenterVertically)
                     )
-                    Text(comment.user.username)
+                    Column(modifier = Modifier.padding(start = 12.dp).fillMaxHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween) {
+                        Text(comment.user.username, style = MaterialTheme.typography.bodyMedium)
+                        Text(comment.date, style = MaterialTheme.typography.bodySmall)
+                    }
                 }
-                Text(
-                    comment.date, modifier = Modifier.align(Alignment.CenterVertically)
-                        .padding(end = 48.dp)
-                )
             }
-            Text(comment.content)
-            LazyRow(){
-                items(comment.images.size){
-                    AsyncImage(comment.images[it], null)
+            Column(modifier = Modifier.padding(start = 60.dp, top = 12.dp)) {
+                Text(comment.content, style = MaterialTheme.typography.bodyMedium)
+                LazyRow() {
+                    items(comment.images.size) {
+                        AsyncImage(comment.images[it], null)
+                    }
                 }
             }
         }
